@@ -153,6 +153,11 @@ Write-Host "Effacage de $($webm_file.FullName)" -ForegroundColor Yellow
 
 Function get_playlist_name($Url,$ParentFolder){
 
+	# todo: essayer simplement avec 
+	# $test = & .\yt-dlp.exe https://youtu.be/JF8HmRFrpzI --print "%(title)s"
+	# $test.Replace("'","")
+	# $test = "'"+$test+"'"
+
 	# Simulate to get playlist name  
 	$output = & $ytdl_path $Url --playlist-start 1 --playlist-end 1 -s
 
@@ -219,6 +224,8 @@ Function yt_video($Url,$Path){
 
 	rename_all $Path
 	convert_thumbnail $Path
+	
+	start $Path
 }
 
 Function yt_playlist($Url,$Path){
@@ -249,6 +256,8 @@ Function yt_playlist($Url,$Path){
 
 	rename_all $playlist_folder
 	convert_thumbnail $playlist_folder
+
+	start $playlist_folder
 
 }
 
@@ -281,4 +290,30 @@ Function yt_zicplaylist($Url,$Path){
 
 	rename_all $playlist_folder
 	convert_thumbnail $playlist_folder
+}
+
+Function yt_zicfromchapters($Url,$Path){
+
+	$video_name = & $ytdl_path $Url -s --print "%(title)s"
+	$artist_name = & $ytdl_path $Url -s --print "%(channel)s"
+
+	$video_name_metadata = "'"+$video_name.Replace("'","")+"'"
+	$playlist_folder = "$Path" + "\" + "$artist_name - $video_name"
+
+	if (-not (Test-Path -Path $playlist_folder -PathType Container)) {
+
+	New-Item -Path $playlist_folder -ItemType Directory -Force
+	Write-Host "Folder created: $playlist_folder" -ForegroundColor Green
+	}	
+		
+	Write-Host "DEBUG Album name: $video_name" -ForegroundColor Green
+	Write-Host "DEBUG Album name metadata: $video_name_metadata" -ForegroundColor Green
+	# $playlist_name = Read-Host -Prompt 'debug ok?' 
+	
+	& $ytdl_path --add-metadata $Url --no-playlist --output "chapter:%(section_title)s.%(ext)s" --no-write-thumbnail --ffmpeg-location "$ffmpeg_path" -x --audio-format mp3 --audio-quality 320 --paths $playlist_folder --split-chapters --embed-metadata --postprocessor-args "-metadata album=$video_name_metadata -metadata title=''"
+
+	rename_all $playlist_folder
+	convert_thumbnail $playlist_folder
+	
+	start $playlist_folder
 }

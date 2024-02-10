@@ -14,3 +14,9 @@ https://imagemagick.org/script/download.php (Portable Win64 static at 16 bits-pe
 ## Usage 
 
 Right clic > start with powershell
+
+1 - download video mp4
+2 - download playlist in mp4 folder
+3 - download video as mp3
+4 - download playlist as mp3 album
+5 - download video chapters as mp3 album

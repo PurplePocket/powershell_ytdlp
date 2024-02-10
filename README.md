@@ -13,6 +13,8 @@ https://imagemagick.org/script/download.php (Portable Win64 static at 16 bits-pe
 
 ## Usage 
 
+Change folder values to whatever you want in `variables.ps1`
+
 Right clic on `youtube_prompt.ps1` > start with powershell
 
 1. download video mp4

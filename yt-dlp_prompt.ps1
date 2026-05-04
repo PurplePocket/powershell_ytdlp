@@ -222,7 +222,7 @@ Function yt_zic($Url,$Path){
 
 Function yt_zicplaylist($Url,$Path){
 
-	$playlist_name = get_playlist_name $Url $Path
+	$playlist_name = get_playlist_name $Url
 	$playlist_folder = "$Path" + "\" + "$playlist_name"
 	check_folder $playlist_folder
 	$playlist_metadata = "'"+"$playlist_name"+"'"

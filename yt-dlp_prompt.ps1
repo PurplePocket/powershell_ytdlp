@@ -174,11 +174,10 @@ Function yt_video($Url,$Path){
 	$vid_name = get_video_name $Url
 	write-host "Downloading <$vid_name> as video to $Path" -ForegroundColor Yellow
 
-	& $ytdl_path --quiet --no-warnings $Url --output '%(title)s.%(ext)s' --write-thumbnail --paths $Path --no-playlist
-
-	# Invoke-WithSpinner -Action {
+	Invoke-WithSpinner -Action {
+		& $ytdl_path --quiet --no-warnings $Url --output '%(title)s.%(ext)s' --write-thumbnail --paths $Path --no-playlist
 	# 	& $using:ytdl_path --quiet --no-warnings --cookies-from-browser chrome $using:Url --output '%(title)s.%(ext)s' --write-thumbnail --paths $using:Path --no-playlist
-	# }
+	}
 
 	write-host "`rVideo <$vid_name.webm> Downloaded, cleanup" -ForegroundColor Yellow
 

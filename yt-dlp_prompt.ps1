@@ -175,8 +175,8 @@ Function yt_video($Url,$Path){
 	write-host "Downloading <$vid_name> as video to $Path" -ForegroundColor Yellow
 
 	Invoke-WithSpinner -Action {
-		& $ytdl_path --quiet --no-warnings $Url --output '%(title)s.%(ext)s' --write-thumbnail --paths $Path --no-playlist
-	# 	& $using:ytdl_path --quiet --no-warnings --cookies-from-browser chrome $using:Url --output '%(title)s.%(ext)s' --write-thumbnail --paths $using:Path --no-playlist
+		& $using:ytdl_path --quiet --no-warnings $using:Url --output '%(title)s.%(ext)s' --write-thumbnail --paths $using:Path --no-playlist
+		# & $ytdl_path --quiet --no-warnings $Url --output '%(title)s.%(ext)s' --write-thumbnail --paths $Path --no-playlist
 	}
 
 	write-host "`rVideo <$vid_name.webm> Downloaded, cleanup" -ForegroundColor Yellow
@@ -199,8 +199,9 @@ Function yt_playlist($Url,$Path){
 	check_folder $playlist_folder
 
 	# write-host "Downloading Url as playlist to $playlist_folder" -ForegroundColor Yellow
-	& $ytdl_path --quiet --no-warnings $Url --output '%(playlist_index)s - %(title)s.%(ext)s' --write-thumbnail --no-overwrites --yes-playlist --paths $playlist_folder
-
+	Invoke-WithSpinner -Action {
+		& $using:ytdl_path --quiet --no-warnings $using:Url --output '%(playlist_index)s - %(title)s.%(ext)s' --write-thumbnail --no-overwrites --yes-playlist --paths $using:playlist_folder
+	}
 	rename_all $playlist_folder
 	convert_thumbnail $playlist_folder
 
@@ -213,8 +214,11 @@ Function yt_zic($Url,$Path){
 
 	$vid_name = get_video_name $Url
     Write-Host "Downloading <$vid_name> and converting it to audio" -ForegroundColor Yellow
-	& $ytdl_path --quiet --no-warnings $Url --output "%(title)s.%(ext)s" --paths $Path --write-thumbnail --ffmpeg-location "$ffmpeg_path" -x --audio-format mp3 --audio-quality 320 --no-playlist --embed-metadata --postprocessor-args "-metadata album='Youtube'" 
 
+	Invoke-WithSpinner -Action {
+		& $using:ytdl_path --quiet --no-warnings $using:Url --output "%(title)s.%(ext)s" --paths $using:Path --write-thumbnail --ffmpeg-location "$using:ffmpeg_path" -x --audio-format mp3 --audio-quality 320 --no-playlist --embed-metadata --postprocessor-args "-metadata album='Youtube'" 
+	}
+	
 	write-host "Music <$vid_name.mp3> Downloaded, cleanup" -ForegroundColor Yellow
 	rename_all $Path
 	convert_thumbnail $Path
@@ -229,7 +233,9 @@ Function yt_zicplaylist($Url,$Path){
 	write-host "Playlist name : $playlist_name" -ForegroundColor Green
 
 	write-host "Downloading playlist and converting it to audio in $playlist_folder" -ForegroundColor Green
-	& $ytdl_path --quiet --no-warnings --add-metadata $Url --yes-playlist --output '%(playlist_index)s - %(title)s.%(ext)s' --no-write-thumbnail --ffmpeg-location "$ffmpeg_path" -x --audio-format mp3 --audio-quality 320 --paths $playlist_folder --embed-metadata --postprocessor-args "-metadata album=$playlist_metadata"
+	Invoke-WithSpinner -Action {
+		& $using:ytdl_path --quiet --no-warnings --add-metadata $using:Url --yes-playlist --output '%(playlist_index)s - %(title)s.%(ext)s' --no-write-thumbnail --ffmpeg-location "$using:ffmpeg_path" -x --audio-format mp3 --audio-quality 320 --paths $using:playlist_folder --embed-metadata --postprocessor-args "-metadata album=$using:playlist_metadata"
+	}
 
 	rename_all $playlist_folder
 	convert_thumbnail $playlist_folder
@@ -245,7 +251,9 @@ Function yt_zicfromchapters($Url,$Path){
 	check_folder $playlist_folder
 
 	write-host "Downloading chapters of <$video_name> and converting them to audio in $playlist_folder" -ForegroundColor Yellow
-	& $ytdl_path --quiet --no-warnings --add-metadata $Url --no-playlist --output "chapter:%(section_title)s.%(ext)s" --no-write-thumbnail --ffmpeg-location "$ffmpeg_path" -x --audio-format mp3 --audio-quality 320 --paths $playlist_folder --split-chapters --embed-metadata --postprocessor-args "-metadata album=$video_name_metadata -metadata title=''"
+	Invoke-WithSpinner -Action {
+		& $using:ytdl_path --quiet --no-warnings --add-metadata $using:Url --no-playlist --output "chapter:%(section_title)s.%(ext)s" --no-write-thumbnail --ffmpeg-location "$using:ffmpeg_path" -x --audio-format mp3 --audio-quality 320 --paths $using:playlist_folder --split-chapters --embed-metadata --postprocessor-args "-metadata album=$using:video_name_metadata -metadata title=''"
+	}
 
 	rename_all $playlist_folder
 	convert_thumbnail $playlist_folder
